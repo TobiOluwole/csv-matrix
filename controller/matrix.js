@@ -1,4 +1,3 @@
-const jsonfile = require('jsonfile')
 exports.graph = function (req, res) {
   let indexes = req.files.index[0].buffer.toString().split("\r\n");
   let matrix = req.files.matrix[0].buffer.toString().split("\r\n");
@@ -23,8 +22,8 @@ exports.graph = function (req, res) {
     for (let j = 0; j < matrix[i].length; j++) {
       if (matrix[i][j] == 1) {
         links.push({
-          source: nodes[i].id,
-          target: nodes[j].id,
+          source: nodes[nodes.findIndex((obj) => obj.id == i)].id,
+          target: nodes[nodes.findIndex((obj) => obj.id == j)].id,
         });
       }
     }
@@ -33,9 +32,5 @@ exports.graph = function (req, res) {
     nodes: nodes,
     links: links,
   };
-  jsonfile.writeFile('public/tmp/data.json', jsonToSend)
-  .then(result => {
-    return res.send(result)
-  })
-  .catch(error => console.error(error))
+  return res.send(jsonToSend);
 };
